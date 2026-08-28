@@ -1,0 +1,1 @@
+{"ts": "2026-08-28T09:33:03.905529+00:00", "action": "reboot", "node": "batman01", "vmid": 100, "resource_type": "lxc", "result": "ok"}
