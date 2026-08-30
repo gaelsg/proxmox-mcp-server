@@ -47,6 +47,10 @@ Solo lectura (Docker, via Portainer):
 uv run proxmox-mcp-server
 ```
 
+## Tracing
+
+Con `OTEL_EXPORTER_OTLP_ENDPOINT` seteado (ver `.env.example`), cada `tools/call` queda como un span en Jaeger, correlacionado con el trace del agente que lo llamó (el SDK de MCP ya trae el middleware de OpenTelemetry — no hizo falta instrumentar cada tool a mano). Ver [`devops-multiagent`](https://github.com/gaelsg/devops-multiagent#tracing-distribuido-opentelemetry--jaeger) para el detalle completo.
+
 ## Probar con MCP Inspector
 
 ```bash

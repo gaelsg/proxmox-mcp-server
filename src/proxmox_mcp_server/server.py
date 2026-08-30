@@ -9,9 +9,11 @@ from mcp.server.mcpserver import MCPServer
 from proxmoxer import ProxmoxAPI
 
 from proxmox_mcp_server.secrets_loader import load_secrets_from_vault
+from proxmox_mcp_server.tracing import configure_tracing
 
 load_dotenv()
 load_secrets_from_vault()
+configure_tracing("proxmox-mcp-server")
 
 mcp = MCPServer("proxmox-mcp-server")
 
