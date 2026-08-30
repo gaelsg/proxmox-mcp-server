@@ -9,6 +9,10 @@ Fase 1-2 de un proyecto más grande: un agente DevOps con capacidades reales sob
 - **Lectura** (`PROXMOX_TOKEN_*`) — usuario `mcp-agent@pve`, rol `PVEAuditor` en `/`, sin privilege separation (hereda del usuario).
 - **Escritura** (`PROXMOX_WRITE_TOKEN_*`) — mismo usuario, rol custom `MCPPowerOperator` (solo `VM.PowerMgmt`) asignado **al token**, no al usuario, con privilege separation activada. Así el token de lectura nunca hereda capacidad de escritura aunque el usuario gane más permisos a futuro.
 
+## Secretos: vía Vault, no en `.env`
+
+Los tokens de arriba (y el API key de Portainer) ya no viven en texto plano en `.env` — viven en [HashiCorp Vault](https://github.com/gaelsg/vault-secrets), en `secret/proxmox-mcp-server`. `.env` solo tiene una credencial AppRole (`VAULT_ROLE_ID`/`VAULT_SECRET_ID`) que pide un token de vida corta (1h) para leerlos al arrancar — ver `src/proxmox_mcp_server/secrets_loader.py`. Si Vault no está configurado (no hay `VAULT_ROLE_ID`), el servidor arranca igual contra lo que haya en el entorno — compatible con desarrollo local sin Vault. Si Vault está configurado pero no responde, el arranque falla con un error claro en vez de correr con credenciales a medias.
+
 ## Docker dentro del LXC "docker-host" (via Portainer)
 
 El LXC 101 corre Docker con Portainer, AdGuard Home y Tailscale. Portainer CE no tiene RBAC granular real (los roles "read-only"/"environment admin" no se aplican en la práctica, y no hay resource control para contenedores creados fuera de su UI) — el usuario dedicado `mcp-agent` en Portainer es administrador global (única forma de que vea los contenedores), pero **el límite de solo-lectura vive en este código, no en Portainer**: `docker_tools.py` solo expone tools de lectura, ninguna de escritura, sin importar que la cuenta técnicamente pueda más. Mismo patrón que el `hide_when_gated` de `devops-multiagent`.

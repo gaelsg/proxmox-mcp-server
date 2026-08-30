@@ -8,7 +8,10 @@ from dotenv import load_dotenv
 from mcp.server.mcpserver import MCPServer
 from proxmoxer import ProxmoxAPI
 
+from proxmox_mcp_server.secrets_loader import load_secrets_from_vault
+
 load_dotenv()
+load_secrets_from_vault()
 
 mcp = MCPServer("proxmox-mcp-server")
 
